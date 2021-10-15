@@ -541,6 +541,15 @@ fast_downward_plugin(
 )
 
 fast_downward_plugin(
+    NAME CE_LANDMARK_CUT_HEURISTIC
+    HELP "The conditional effects LM-cut heuristic"
+    SOURCES
+        heuristics/ce_lm_cut_heuristic
+        heuristics/ce_lm_cut_landmarks
+    DEPENDS PRIORITY_QUEUES TASK_PROPERTIES
+)
+
+fast_downward_plugin(
     NAME MAX_HEURISTIC
     HELP "The Max heuristic"
     SOURCES

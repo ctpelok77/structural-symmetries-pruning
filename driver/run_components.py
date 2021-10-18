@@ -46,7 +46,6 @@ def get_executable(build, rel_path):
 
     return abs_path
 
-
 def run_translate(args):
     logging.info("Running translator.")
     time_limit = limits.get_time_limit(
@@ -92,6 +91,31 @@ def run_translate(args):
         # exit codes such as running out of memory or time.
         return (returncode, False)
 
+
+def transform_task(args):
+    logging.info("Run task transformation (%s)." % args.transform_task)
+    time_limit = limits.get_time_limit(
+        args.transform_time_limit, args.overall_time_limit)
+    memory_limit = limits.get_memory_limit(
+        args.transform_memory_limit, args.overall_memory_limit)
+
+    try:
+        transform = get_executable(args.build, args.transform_task)
+        logging.info("Absolute path: %s" % transform)
+        cmd = [transform, "--h2_output_file", args.sas_file]
+
+        if time_limit:
+            cmd.extend(["--h2_time_limit", str(time_limit)])
+
+        logging.info("callstring: %s" % " ".join(cmd))
+        call.check_call("transform", cmd, stdin=args.sas_file, time_limit=time_limit, memory_limit=memory_limit)
+    except OSError as err:
+        if err.errno == errno.ENOENT:
+            sys.exit("Error: {} not found. Is it on the PATH?".format(
+                args.transform_task))
+        return (err.returncode, False)
+    else:
+        return (0, True)
 
 def run_search(args):
     logging.info("Running search (%s)." % args.build)

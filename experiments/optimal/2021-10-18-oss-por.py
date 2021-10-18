@@ -23,7 +23,6 @@ CONFIGS = [
     IssueConfig("hmax-oss-por", ["--symmetries", "sym=structural_symmetries(time_bound=0,search_symmetries=oss, stabilize_initial_state=false)","--search", "astar(hmax(),symmetries=sym,pruning=stubborn_sets_simple(min_required_pruning_ratio=0.01,expansions_before_checking_pruning_ratio=1000))"]),
     IssueConfig("ipdb-oss-por", ["--symmetries", "sym=structural_symmetries(time_bound=0,search_symmetries=oss, stabilize_initial_state=false)","--search", "astar(ipdb(pdb_max_size=2000000, collection_max_size=20000000, num_samples=1000, min_improvement=10, max_time=infinity, random_seed=-1, max_time_dominance_pruning=infinity, transform=no_transform(), cache_estimates=true),symmetries=sym,pruning=stubborn_sets_simple(min_required_pruning_ratio=0.01,expansions_before_checking_pruning_ratio=1000))"]),
 ]
-
 SUITE = common_setup.DEFAULT_OPTIMAL_SUITE
 ENVIRONMENT = LocalEnvironment(processes=48)
 

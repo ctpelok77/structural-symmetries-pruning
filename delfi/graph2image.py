@@ -122,7 +122,7 @@ def shrink_matrix_raw_to_grayscale(graph, bolded=False, shrink_ratio=6):
             n += 1
     return shrinked_matrix_data_test, shrinked_sz
 
-def write_matrix_image_grayscale(graph, output_directory, bolded=False, shrink_ratio=6, target_size=128, write_original_size=False):
+def write_matrix_image_grayscale(graph, output_directory, bolded=False, shrink_ratio=6, target_size=128, write_original_size=False, write_modified_size=True):
     """Write the graph into a grayscale image"""
     """If shrink_ratio of 1 is used, using raw [0, 1] values for each pixel.
         If shrink_ratio of up to 3 is used, using [0, 255] values for each pixel.
@@ -164,11 +164,12 @@ def write_matrix_image_grayscale(graph, output_directory, bolded=False, shrink_r
 
     newimg = im.resize(size, Image.ANTIALIAS)
 
-    logging.debug("Writing grayscale image of size %sx%s .." % size)
-    newimg.save(os.path.join(output_directory, nm_constant_size), "png")
-
+    if write_modified_size:
+        logging.debug("Writing grayscale image of size %sx%s .." % size)
+        newimg.save(os.path.join(output_directory, nm_constant_size), "png")
     #im.thumbnail(size, Image.ANTIALIAS)
     #im.save(nm_thumbnail, "png")
+    return newimg
 
 
 if __name__ == "__main__":

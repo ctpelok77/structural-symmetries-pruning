@@ -58,9 +58,7 @@ def select_algorithm_from_model(json_model, h5_model, image):
     #print(list_solver_names)
 
     list_x = []
-
-    img = Image.open(image)
-    list_x.append(np.array(img))
+    list_x.append(np.array(image))
 
     #print("\nNumber of total data points: " + str(len(list_x)))
     # Normalize feature image values to 0..1 range (assumes gray scale)

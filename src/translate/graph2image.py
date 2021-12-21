@@ -182,10 +182,10 @@ if __name__ == "__main__":
 
 
     parser.add_argument(
-        "input_file", help="Absolute path to a file containing one line of "
+        "--graph-file", help="Absolute path to a file containing one line of "
         "integers denoting successors as in an adjacency graph.")
     parser.add_argument(
-        "image_output_directory", help="Absolute path where the image of the abstract "
+        "--image-output-directory", help="Absolute path where the image of the abstract "
         "structure graph should be stored.")
     parser.add_argument(
         "--write-abstract-structure-image-raw", action="store_true",
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         "that is each dot is surrounded by 4 additional dots.")
 
     args = parser.parse_args()
-    input_file = args.input_file
+    input_file = args.graph_file
     image_output_directory = args.image_output_directory
     use_bolding = args.bolding_abstract_structure_image
     write_original_size = args.write_abstract_structure_image_original_size

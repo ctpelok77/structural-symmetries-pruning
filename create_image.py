@@ -56,10 +56,10 @@ def compute_graph_for_task(domain, problem, image_from_lifted_task):
     else:
         command = [sys.executable, os.path.join(repo_dir, 'fast-downward.py'), domain, problem, '--symmetries','sym=structural_symmetries(time_bound=0,search_symmetries=oss,dump_symmetry_graph=true)', '--search', 'astar(max([blind(),const(value=infinity)]),symmetries=sym)']
         graph_file = os.path.join(pwd, 'symmetry-graph.txt')
+
+    # Removing the old file
+    force_remove_file(graph_file)
     try:
-        # Removing the graph file, if exists
-        if os.path.isfile(graph_file):
-            os.remove(graph_file)
 
         FNULL = open(os.devnull, 'w')
         subprocess.check_call(command, timeout=GRAPH_CREATION_TIME_LIMIT, stdout=FNULL, stderr=FNULL)
@@ -84,43 +84,36 @@ if __name__ == "__main__":
         "--image-from-lifted-task", action="store_true",
         help="If true, create the abstract structure graph based on the PDDL "
         "description of the task and then create an image from it.")
-    # parser.add_argument(
-    #     "--image-from-grounded-task", action="store_true",
-    #     help="If true, create the PDG-style graph based on the grounded SAS "
-    #     "task and then create an image from it.")
 
     args = parser.parse_args()
 
     domain = args.domain_file
     problem = args.problem_file
-    image_from_lifted_task = args.image_from_lifted_task
-    # image_from_grounded_task = args.image_from_grounded_task
-    # if (image_from_lifted_task and image_from_grounded_task) or (not image_from_lifted_task and not image_from_grounded_task):
-    #     sys.exit("Please use exactly one of --image-from-lifted-task and --image-from-grounded-task")
-
-    repo_dir = get_repo_base()
-    pwd = os.getcwd()
+    image_file_name = 'graph-gs-L-bolded-cs.png'
+    image_file = os.path.join(os.getcwd(), image_file_name)
+    # TODO: we should be able to not hard-code the file names
+ 
+    # Removing the old file
+    force_remove_file(image_file)
 
     logging.info("Computing graph representation of the planning task")
-    graph_file = compute_graph_for_task(domain, problem, image_from_lifted_task)
+    graph_file = compute_graph_for_task(domain, problem, args.image_from_lifted_task)
     if graph_file is None:
-        logging.info("Graph creation is failed, exiting")
-        exit(1)
+        sys.exit("Graph creation is failed, exiting")
     logging.info("Done computing graph representation, casting graph as image")
-    """
-    '--write-abstract-structure-image-reg', 
-    '--bolding-abstract-structure-image', 
-    '--abstract-structure-image-target-size', '128', 
-    graph_file, pwd], timeout=IMAGE_CREATION_TIME_LIMIT)
-    """
+
     try:
-        # Create an image from the abstract structure for the given domain and problem.
-        subprocess.check_call([sys.executable, os.path.join(repo_dir, 'src/translate/graph2image.py'), '--write-abstract-structure-image-reg', '--bolding-abstract-structure-image', '--abstract-structure-image-target-size', '128', graph_file, pwd], timeout=IMAGE_CREATION_TIME_LIMIT)
-        # TODO: we should be able to not hard-code the file name
-        image_file_name = 'graph-gs-L-bolded-cs.png'
-        image_path = os.path.join(pwd, image_file_name)
-        assert os.path.exists(image_path)
-        logging.info("Image creation finished, written image to %s" % image_path)
+        # Create an image from the graph for the given domain and problem.
+        graph_to_image = os.path.join(get_repo_base(), 'src/translate/graph2image.py')
+        command = [sys.executable, graph_to_image, 
+                                    '--graph-file', graph_file,
+                                    '--image-output-directory', os.getcwd(), 
+                                    '--write-abstract-structure-image-reg', '--bolding-abstract-structure-image', 
+                                    '--abstract-structure-image-target-size', '128']
+        
+        subprocess.check_call(command, timeout=IMAGE_CREATION_TIME_LIMIT)
+        assert os.path.exists(image_file)
+        logging.info("Image creation finished, written image to %s" % image_file)
     except:
         logging.info("Image creation failed")
 

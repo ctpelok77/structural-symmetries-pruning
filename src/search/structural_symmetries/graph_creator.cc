@@ -133,6 +133,21 @@ struct DotGraph {
         file << "}" << endl;
         file.close();
     }
+
+    void write_adjacency_matrix() const {
+        ofstream file;
+        file.open ("symmetry-graph.txt");
+        for (size_t node_index = 0; node_index < neighbors.size(); ++node_index) {
+            const vector<int> &node_neighbors = neighbors[node_index];
+            for (int neighbor : node_neighbors) {
+                file << neighbor << ",";
+            }
+            if (node_index != neighbors.size() - 1) {
+                file << endl;
+            }
+        }
+        file.close();
+    }
 };
 
 void GraphCreator::create_bliss_directed_graph(
@@ -273,7 +288,8 @@ void GraphCreator::create_bliss_directed_graph(
     }
 
     if (dump_symmetry_graph) {
-        dot_graph.write();
+//        dot_graph.write();
+        dot_graph.write_adjacency_matrix();
     }
 }
 

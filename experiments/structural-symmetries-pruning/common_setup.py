@@ -293,11 +293,12 @@ class IssueExperiment(FastDownwardExperiment):
 
         """
         kwargs.setdefault("attributes", self.DEFAULT_TABLE_ATTRIBUTES)
+        name = kwargs.get("name") or "report-absolute"
         report = AbsoluteReport(**kwargs)
         outfile = os.path.join(
             self.eval_dir,
             get_experiment_name() + "." + report.output_format)
-        self.add_report(report, outfile=outfile)
+        self.add_report(report, outfile=outfile, name=name)
         self.add_step(
             'publish-absolute-report', subprocess.call, ['publish', outfile])
 

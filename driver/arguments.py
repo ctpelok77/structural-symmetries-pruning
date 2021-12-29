@@ -86,7 +86,7 @@ Examples:
 %s
 """ % "\n\n".join("%s\n%s" % (desc, " ".join([os.path.basename(sys.argv[0])] + parameters)) for desc, parameters in EXAMPLES)
 
-COMPONENTS_PLUS_OVERALL = ["translate", "search", "validate", "overall"]
+COMPONENTS_PLUS_OVERALL = ["translate", "transform", "search", "validate", "overall"]
 DEFAULT_SAS_FILE = "output.sas"
 
 
@@ -382,6 +382,9 @@ def parse_args():
     driver_other.add_argument(
         "--debug", action="store_true",
         help="alias for --build=debug --validate")
+    driver_other.add_argument(
+        "--transform-task",
+        help='path to or name of external program that transforms output.sas (e.g. h2-mutexes)')
     driver_other.add_argument(
         "--validate", action="store_true",
         help='validate plans (implied by --debug); needs "validate" (VAL) on PATH')

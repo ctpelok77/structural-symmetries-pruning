@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     try:
         # Create an image from the graph for the given domain and problem.
-        graph_to_image = os.path.join(get_repo_base(), 'src/translate/graph2image.py')
+        graph_to_image = os.path.join(get_repo_base(), 'delfi/graph2image.py')
         command = [sys.executable, graph_to_image, 
                                     '--graph-file', graph_file,
                                     '--image-output-directory', os.getcwd(), 

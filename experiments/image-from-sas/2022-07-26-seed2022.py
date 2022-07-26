@@ -88,7 +88,7 @@ BENCHMARKS_DIR =  '/data/software/FDR-benchmark'
 SUITE = ["bidirectional-bi-partite-sas", "bi-partite-sas", "chain-0.1-sas", "chain-0.25-sas", "chain-0.5-sas", "chain-0.75-sas", "dag-0.1-sas", "dag-0.25-sas", "dag-0.5-sas", "dag-0.75-sas", "directed-chain-sas", "fork-sas", "inverted-fork-sas", "polytree-0.1-sas", "polytree-0.25-sas", "polytree-0.5-sas", "polytree-0.75-sas", "random-0.1-sas", "random-0.25-sas", "random-0.5-sas", "random-0.75-sas", "star-0.1-sas", "star-0.25-sas", "star-0.5-sas", "star-0.75-sas", "tree-sas"]
 
 # For the fdr generated tasks from PDDL
-BENCHMARKS_DIR =  '/data/software/FDR-benchmarks-from-PDDL/07-21-2022-seed2021'
+BENCHMARKS_DIR =  '/data/software/FDR-benchmarks-from-PDDL/07-21-2022-seed2022'
 SUITE = ['ss_grid', 'briefcaseworld', 't0-uts', 'ss_npuzzle', 'ss_hanoi', 'ss_citycar', 't0-sortnet-alt', 't0-grid-push', 'ss_cavediving', 'gedp-ds2ndp', 't0-adder', 't0-grid-dispose', 'ss_hiking', 'ss_maintenance_large', 'ss_ferry', 'trucks-strips', 'fsc-grid-r', 'ss_barman', 'fsc-hall', 't0-coins', 'fsc-grid-a2', 't0-comm', 'pathways-noneg', 'ss_maintenance', 'ss_schedule', 'openstacks-strips', 't0-grid-trash', 'ss_spanner', 'ss_goldminer', 'ss_briefcaseworld', 'fsc-grid-a1', 't0-sortnet', 'fsc-visualmarker', 'fsc-blocks']
 SUITE = [f'rg-{d}' for d in SUITE]
 

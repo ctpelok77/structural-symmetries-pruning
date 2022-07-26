@@ -1,0 +1,140 @@
+#! /usr/bin/env python
+
+import os
+import sys
+
+from lab.environments import LocalEnvironment
+from lab.experiment import Experiment
+from lab import tools
+from lab.reports import Attribute, geometric_mean
+
+from downward import suites
+from downward.reports.absolute import AbsoluteReport
+
+
+# Copied from common_setup.py of issue733
+def get_script():
+    """Get file name of main script."""
+    return tools.get_script_path()
+
+
+def get_script_dir():
+    """Get directory of main script.
+
+    Usually a relative directory (depends on how it was called by the user.)"""
+    return os.path.dirname(get_script())
+
+# def get_repo_base():
+#     """Get base directory of the repository, as an absolute path.
+
+#     Search upwards in the directory tree from the main script until a
+#     directory with a subdirectory named ".hg" is found.
+
+#     Abort if the repo base cannot be found."""
+#     path = os.path.abspath(get_script_dir())
+#     while os.path.dirname(path) != path:
+#         if os.path.exists(os.path.join(path, ".hg")):
+#             return path
+#         path = os.path.dirname(path)
+#     sys.exit("repo base could not be found")
+
+
+def get_base_dir():
+    """Assume that this script always lives in the base dir of the infrastructure."""
+    return os.path.abspath(get_script_dir())
+
+def get_path_level_up(path):
+    return os.path.dirname(path)
+
+def get_planner_dir():
+    return get_path_level_up(get_path_level_up(get_base_dir()))
+
+
+REPO_DIR = get_planner_dir()
+# BENCHMARKS_DIR = os.environ["DOWNWARD_BENCHMARKS_IPC2018"]
+ENV = LocalEnvironment(processes=48)
+
+# optimal strips suite
+SUITE = ['airport', 'barman-opt11-strips', 'barman-opt14-strips', 'blocks',
+'childsnack-opt14-strips', 'depot', 'driverlog', 'elevators-opt08-strips',
+'elevators-opt11-strips', 'floortile-opt11-strips', 'floortile-opt14-strips',
+'freecell', 'ged-opt14-strips', 'grid', 'gripper', 'hiking-opt14-strips',
+'logistics00', 'logistics98', 'miconic', 'movie', 'mprime', 'mystery',
+'nomystery-opt11-strips', 'openstacks-opt08-strips', 'openstacks-opt11-strips',
+'openstacks-opt14-strips', 'openstacks-strips', 'parcprinter-08-strips',
+'parcprinter-opt11-strips', 'parking-opt11-strips', 'parking-opt14-strips',
+'pathways-noneg', 'pegsol-08-strips', 'pegsol-opt11-strips',
+'pipesworld-notankage', 'pipesworld-tankage', 'psr-small', 'rovers',
+'satellite', 'scanalyzer-08-strips', 'scanalyzer-opt11-strips',
+'sokoban-opt08-strips', 'sokoban-opt11-strips', 'storage',
+'tetris-opt14-strips', 'tidybot-opt11-strips', 'tidybot-opt14-strips', 'tpp',
+'transport-opt08-strips', 'transport-opt11-strips', 'transport-opt14-strips',
+'trucks-strips', 'visitall-opt11-strips', 'visitall-opt14-strips',
+'woodworking-opt08-strips', 'woodworking-opt11-strips', 'zenotravel',
+'ss_barman', 'ss_ferry', 'ss_goldminer', 'ss_grid', 'ss_hanoi', 'ss_hiking',
+'ss_npuzzle', 'ss_spanner']
+
+# conditional effects suite
+SUITE.extend(['briefcaseworld', 'cavediving-14-adl', 'citycar-opt14-adl',
+'fsc-blocks', 'fsc-grid-a1', 'fsc-grid-a2', 'fsc-grid-r', 'fsc-hall',
+'fsc-visualmarker', 'gedp-ds2ndp', 'miconic-simpleadl', 't0-adder', 't0-coins',
+'t0-comm', 't0-grid-dispose', 't0-grid-push', 't0-grid-trash', 't0-sortnet',
+'t0-sortnet-alt', 't0-uts', 'ss_briefcaseworld', 'ss_cavediving', 'ss_citycar',
+'ss_maintenance', 'ss_maintenance_large', 'ss_schedule'])
+
+
+# For the fdr generated tasks
+BENCHMARKS_DIR =  '/data/software/FDR-benchmark'
+SUITE = ["bidirectional-bi-partite-sas", "bi-partite-sas", "chain-0.1-sas", "chain-0.25-sas", "chain-0.5-sas", "chain-0.75-sas", "dag-0.1-sas", "dag-0.25-sas", "dag-0.5-sas", "dag-0.75-sas", "directed-chain-sas", "fork-sas", "inverted-fork-sas", "polytree-0.1-sas", "polytree-0.25-sas", "polytree-0.5-sas", "polytree-0.75-sas", "random-0.1-sas", "random-0.25-sas", "random-0.5-sas", "random-0.75-sas", "star-0.1-sas", "star-0.25-sas", "star-0.5-sas", "star-0.75-sas", "tree-sas"]
+
+# For the fdr generated tasks from PDDL
+BENCHMARKS_DIR =  '/data/software/FDR-benchmarks-from-PDDL/07-21-2022-seed2021'
+SUITE = ['ss_grid', 'briefcaseworld', 't0-uts', 'ss_npuzzle', 'ss_hanoi', 'ss_citycar', 't0-sortnet-alt', 't0-grid-push', 'ss_cavediving', 'gedp-ds2ndp', 't0-adder', 't0-grid-dispose', 'ss_hiking', 'ss_maintenance_large', 'ss_ferry', 'trucks-strips', 'fsc-grid-r', 'ss_barman', 'fsc-hall', 't0-coins', 'fsc-grid-a2', 't0-comm', 'pathways-noneg', 'ss_maintenance', 'ss_schedule', 'openstacks-strips', 't0-grid-trash', 'ss_spanner', 'ss_goldminer', 'ss_briefcaseworld', 'fsc-grid-a1', 't0-sortnet', 'fsc-visualmarker', 'fsc-blocks']
+SUITE = [f'rg-{d}' for d in SUITE]
+
+SUITE1 = ["agricola-opt18-strips", "airport", "assembly", "barman-opt11-strips", "barman-opt14-strips", "blocks", "caldera-opt18-adl", "caldera-split-opt18-adl", "cavediving-14-adl", "childsnack-opt14-strips", "citycar-opt14-adl", "data-network-opt18-strips", "depot", "driverlog", "elevators-opt08-strips", "elevators-opt11-strips", "floortile-opt11-strips", "floortile-opt14-strips", "freecell", "ged-opt14-strips", "grid", "gripper", "hiking-opt14-strips", "logistics00", "logistics98", "maintenance-opt14-adl", "miconic", "miconic-fulladl", "miconic-simpleadl", "movie", "mprime", "mystery", "nomystery-opt11-strips", "nurikabe-opt18-adl", "openstacks", "openstacks-opt08-adl", "openstacks-opt08-strips", "openstacks-opt11-strips", "openstacks-opt14-strips", "optical-telegraphs", "organic-synthesis-opt18-strips", "organic-synthesis-split-opt18-strips", "parcprinter-08-strips", "parcprinter-opt11-strips", "parking-opt11-strips", "parking-opt14-strips", "pathways", "pegsol-08-strips", "pegsol-opt11-strips", "petri-net-alignment-opt18-strips", "philosophers", "pipesworld-notankage", "pipesworld-tankage", "psr-large", "psr-middle", "psr-small", "rovers", "satellite", "scanalyzer-08-strips", "scanalyzer-opt11-strips", "schedule", "settlers-opt18-adl", "snake-opt18-strips", "sokoban-opt08-strips", "sokoban-opt11-strips", "spider-opt18-strips", "storage", "termes-opt18-strips", "tetris-opt14-strips", "tidybot-opt11-strips", "tidybot-opt14-strips", "tpp", "transport-opt08-strips", "transport-opt11-strips", "transport-opt14-strips", "trucks", "visitall-opt11-strips", "visitall-opt14-strips", "woodworking-opt08-strips", "woodworking-opt11-strips", "zenotravel"]
+SUITE2 = ['airport', 'barman-opt11-strips', 'barman-opt14-strips', 'blocks', 'briefcaseworld', 'cavediving-14-adl', 'childsnack-opt14-strips', 'citycar-opt14-adl', 'depot', 'driverlog', 'elevators-opt08-strips', 'elevators-opt11-strips', 'floortile-opt11-strips', 'floortile-opt14-strips', 'freecell', 'fsc-blocks', 'fsc-grid-a1', 'fsc-grid-a2', 'fsc-grid-r', 'fsc-hall', 'fsc-visualmarker', 'ged-opt14-strips', 'gedp-ds2ndp', 'grid', 'gripper', 'hiking-opt14-strips', 'logistics00', 'logistics98', 'miconic', 'miconic-simpleadl', 'movie', 'mprime', 'mystery', 'nomystery-opt11-strips', 'openstacks-opt08-strips', 'openstacks-opt11-strips', 'openstacks-opt14-strips', 'openstacks-strips', 'parcprinter-08-strips', 'parcprinter-opt11-strips', 'parking-opt11-strips', 'parking-opt14-strips', 'pathways-noneg', 'pegsol-08-strips', 'pegsol-opt11-strips', 'pipesworld-notankage', 'pipesworld-tankage', 'psr-small', 'rovers', 'satellite', 'scanalyzer-08-strips', 'scanalyzer-opt11-strips', 'sokoban-opt08-strips', 'sokoban-opt11-strips', 'ss_barman', 'ss_briefcaseworld', 'ss_cavediving', 'ss_citycar', 'ss_ferry', 'ss_goldminer', 'ss_grid', 'ss_hanoi', 'ss_hiking', 'ss_maintenance', 'ss_maintenance_large', 'ss_npuzzle', 'ss_schedule', 'ss_spanner', 'storage', 't0-adder', 't0-coins', 't0-comm', 't0-grid-dispose', 't0-grid-push', 't0-grid-trash', 't0-sortnet', 't0-sortnet-alt', 't0-uts', 'tetris-opt14-strips', 'tidybot-opt11-strips', 'tidybot-opt14-strips', 'tpp', 'transport-opt08-strips', 'transport-opt11-strips', 'transport-opt14-strips', 'trucks-strips', 'visitall-opt11-strips', 'visitall-opt14-strips', 'woodworking-opt08-strips', 'woodworking-opt11-strips', 'zenotravel']
+SUITE1 = [x for x in SUITE1 if "opt18" not in x]
+SUITE = list(set(SUITE2) | set(SUITE1))
+SUITE = [f'rg-{d}' for d in SUITE]
+
+
+# Create a new experiment.
+exp = Experiment(environment=ENV)
+# Copy parser into experiment dir and make it available as
+# "parser". Parsers have to be executable.
+exp.add_resource('parser', 'symba-parser.py')
+exp.add_resource('time_parser', 'parser.py', dest='parser.py')
+
+# Absolute path to executable
+planner = os.path.join(os.path.abspath(REPO_DIR), 'delfi', 'create_image_grounded_sas.py')
+
+for task in suites.build_suite(BENCHMARKS_DIR, SUITE):
+    run = exp.add_run()
+    # Create symbolic links and aliases. This is optional. We
+    # could also use absolute paths in add_command().
+    run.add_resource('problem', task.problem_file, symlink=True)
+    # We could also use exp.add_resource() for the binary.
+    run.add_command(
+                'run-planner',
+                [sys.executable,  planner, '{problem}'],
+                time_limit=1800,
+                memory_limit=7600)
+
+    run.set_property('domain', task.domain)
+    run.set_property('problem', task.problem)
+    run.set_property('algorithm', "image-generation")
+    # Every run has to have a unique id in the form of a list.
+    # The algorithm name is only really needed when there are
+    # multiple algorithms.
+    run.set_property('id', ["image-generation", task.domain, task.problem])
+
+# Add step that writes experiment files to disk.
+exp.add_step('build', exp.build)
+
+# Add step that executes all runs.
+exp.add_step('start', exp.start_runs)
+
+# Parse the commandline and run the specified steps.
+exp.run_steps()
+

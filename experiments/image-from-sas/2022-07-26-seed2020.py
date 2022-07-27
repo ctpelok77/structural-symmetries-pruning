@@ -96,10 +96,6 @@ SUITE = [f'rg-{d}' for d in SUITE]
 
 # Create a new experiment.
 exp = Experiment(environment=ENV)
-# Copy parser into experiment dir and make it available as
-# "parser". Parsers have to be executable.
-exp.add_resource('parser', 'symba-parser.py')
-exp.add_resource('time_parser', 'parser.py', dest='parser.py')
 
 # Absolute path to executable
 planner = os.path.join(os.path.abspath(REPO_DIR), 'delfi', 'create_image_grounded_sas.py')

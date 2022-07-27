@@ -138,7 +138,7 @@ def gather_generated_images():
     for folder in glob.glob(os.path.join(EXP_FOLDER, "runs-*","*")):
         data = get_static_data(folder)
         domain = data["domain"]
-        problem =domain+ "-"+data["problem"].replace(".sas", ".pddl")+"-bolded-cs.png"
+        problem =domain+ data["problem"].replace("output","").replace(".sas", ".pddl")+"-bolded-cs.png"
         print(problem)
         dest_domain = os.path.join(DEST_FOLDER, domain)
         os.makedirs(dest_domain, exist_ok=True)

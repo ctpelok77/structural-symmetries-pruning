@@ -2,6 +2,7 @@
 
 import os
 import sys
+import json, glob, shutil
 
 from lab.environments import LocalEnvironment
 from lab.experiment import Experiment
@@ -130,6 +131,29 @@ exp.add_step('build', exp.build)
 
 # Add step that executes all runs.
 exp.add_step('start', exp.start_runs)
+
+def get_static_data(folder):
+    with open(os.path.join(folder, "static-properties"), "r") as f:
+        return json.load(f)
+
+def gather_generated_images():
+    EXP_FOLDER = os.path.join("data", exp.name)
+    DEST_FOLDER = os.path.join(EXP_FOLDER,"images")
+    for folder in glob.glob(os.path.join(EXP_FOLDER, "runs-*","*")):
+        data = get_static_data(folder)
+        domain = data["domain"]
+        problem =domain+ data["problem"].replace("output","").replace(".sas", ".pddl")+"-bolded-cs.png"
+        print(problem)
+        dest_domain = os.path.join(DEST_FOLDER, domain)
+        os.makedirs(dest_domain, exist_ok=True)
+        for f in glob.glob(os.path.join(folder, "output-*.png")):
+            bname = os.path.basename(f)
+            destname = os.path.join(dest_domain, problem)
+            print("Copying %s into %s" % (bname, destname))
+
+            shutil.copy2(f, destname)
+
+exp.add_step("gather-generated-images", gather_generated_images)
 
 # Parse the commandline and run the specified steps.
 exp.run_steps()
